@@ -41,6 +41,7 @@ plt.xlabel('Sleep Disorder')
 plt.ylabel('Count')
 plt.show()
 
+
 #GENDER
 gender_count=df['Gender'].value_counts()
 
@@ -82,9 +83,11 @@ df['Age Range'] = pd.cut(df['Age'], bins=bins, labels=labels, right=False)
 
 age_sleep_disorder = df.groupby(['Age Range', 'Sleep Disorder']).size().unstack(fill_value=0)
 
+age_sleep_disorder_perc = age_sleep_disorder.div(age_sleep_disorder.sum(axis=1), axis=0) * 100
+
 
 plt.figure()
-age_sleep_disorder.plot(kind='bar', stacked=True, color=colors)
+age_sleep_disorder_perc.plot(kind='bar', stacked=True, color=colors)
 plt.title('Distribution of sleep disorders by age ranges')
 plt.xlabel('Age Range')
 plt.ylabel('Count')
@@ -116,10 +119,13 @@ def categorize_occupation(occupation):
 df['Occupation Group'] = df['Occupation'].apply(categorize_occupation)
 
 occupation_sleep_disorder = df.groupby(['Occupation Group', 'Sleep Disorder']).size().unstack(fill_value=0)
-    
+
+#occupation percentage
+occupation_sleep_disorder_perc = occupation_sleep_disorder.div(occupation_sleep_disorder.sum(axis=1), axis=0) * 100
+
 plt.figure()
-occupation_sleep_disorder.plot(kind='bar', stacked=True, color=colors)
-plt.title('Distribution of Sleep Disorders by Occupation Group')
+occupation_sleep_disorder_perc.plot(kind='bar', stacked=True, color=colors)
+plt.title('Percentage distribution of Sleep Disorders by Occupation Group')
 plt.xlabel('Occupation Group')
 plt.ylabel('Count')
 plt.legend(title='Sleep Disorder')
@@ -128,7 +134,74 @@ df_encoded = pd.get_dummies(df, columns=['Sleep Disorder'], drop_first=False)
 df_encoded['Sleep Disorder'] = df['Sleep Disorder']
 
 #SLEEP DURATION
+plt.figure()
+df['Sleep Duration'].hist(bins=20)
+plt.title('Distribution of sleep duration')
+plt.xlabel('Sleep Duration [hours]')
+plt.ylabel('Count')
+
+
+mean_sleep_duration = df.groupby('Sleep Disorder')['Sleep Duration'].mean()
+
+plt.figure()
+mean_sleep_duration.plot(kind='bar', color=colors)
+plt.title('Average sleep duration for each sleep disorder')
+plt.xlabel('Sleep Disorder')
+plt.ylabel('Average sleep duration [hours]')
+
+plt.figure()
+sns.violinplot(x='Sleep Disorder', y='Sleep Duration', data=df, palette=custom_palette)
+plt.title('Sleep duration for each sleep disorder')
+plt.xlabel('Sleep Disorder')
+plt.ylabel('Sleep Duration')
+
+#SLEEP DURATION IN GENDER
+mean_sleep_duration_by_gender = df.groupby('Gender')['Sleep Duration'].mean()
+
+plt.figure()
+mean_sleep_duration_by_gender.plot(kind='bar', color=['dodgerblue', 'orchid'])
+plt.title('Average Sleep Duration by Gender')
+plt.xlabel('Gender')
+plt.ylabel('Average sleep duration [hours]')
+
+mean_sleep_duration_by_occup = df.groupby('Occupation Group')['Sleep Duration'].mean()
+
+plt.figure()
+mean_sleep_duration_by_occup.plot(kind='bar', color=['#357dbd', '#15a28f', '#1c9a50', '#e9c825', '#a21a0e'])
+plt.title('Sleep duration by occupation')
+plt.xlabel('Occupation Group')
+plt.ylabel('Average sleep duration [hours]')
+
 #QUALITY OF SLEEP
+plt.figure()
+df['Quality of Sleep'].hist(bins=20)
+plt.title('Distribution of Quality of Sleep')
+plt.xlabel('Quality of Sleep')
+plt.ylabel('Count')
+
+quality_of_sleep = df.groupby('Sleep Disorder')['Quality of Sleep'].mean()
+
+plt.figure()
+sns.barplot(x='Sleep Disorder', y='Quality of Sleep', data=df, palette=custom_palette)
+plt.title('Average Quality of Sleep by Sleep Disorder')
+plt.xlabel('Sleep Disorder')
+plt.ylabel('Average Quality of Sleep')
+
+quality_of_sleep_age = df.groupby('Age Range')['Quality of Sleep'].mean()
+
+plt.figure(figsize=(10, 6))
+quality_of_sleep_age.plot(kind='line', marker='o', color='blue')
+plt.title('Average quality of sleep by age')
+plt.xlabel('Age Range')
+plt.ylabel('Average Quality of Sleep')
+
+
+
+#one hot encoding
+#df_encoded = pd.get_dummies(df, columns=['Sleep Disorder'], drop_first=False)
+#df_encoded['Sleep Disorder'] = df['Sleep Disorder']
+
+
 #PHYSICAL ACTIVITY LEVEL
 #STRESS LEVEL
 #BMI CATEGORY
