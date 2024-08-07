@@ -213,7 +213,7 @@ plt.xlabel('Age Range')
 plt.ylabel('Physical Activity Level [minutes/day]')
 plt.legend(title='Gender')
 
-activity_by_occup = df_encoded.groupby('Occupation')['Physical Activity Level'].mean().reset_index()
+activity_by_occup = df_encoded.groupby('Occupation Group')['Physical Activity Level'].mean().reset_index()
 
 plt.figure()
 sns.barplot(x='Occupation Group', y='Physical Activity Level', data=activity_by_occup, palette='pastel')
@@ -222,17 +222,130 @@ plt.xlabel('Occupation Group')
 plt.ylabel('Physical Activity Level [minutes/day]')
 
 df_encoded['Sleep Disorder_Insomnia'] = df_encoded['Sleep Disorder_Insomnia'].astype(int)
+df_encoded['Sleep Disorder_None'] = df_encoded['Sleep Disorder_None'].astype(int)
+df_encoded['Sleep Disorder_Sleep Apnea'] = df_encoded['Sleep Disorder_Sleep Apnea'].astype(int)
 
 corr_activity_ins = df_encoded[['Physical Activity Level', 'Sleep Disorder_Insomnia']].corr().loc['Physical Activity Level', 'Sleep Disorder_Insomnia']
-corr_activity_none = df_encoded[['Physical Activity Level', 'Sleep Disorder_None']].corr()
-corr_activity_sa = df_encoded[['Physical Activity Level', 'Sleep Disorder_Sleep Apnea']].corr()
+corr_activity_none = df_encoded[['Physical Activity Level', 'Sleep Disorder_None']].corr().loc['Physical Activity Level', 'Sleep Disorder_None']
+corr_activity_sa = df_encoded[['Physical Activity Level', 'Sleep Disorder_Sleep Apnea']].corr().loc['Physical Activity Level', 'Sleep Disorder_Sleep Apnea']
 
+plt.figure(figsize=(10, 6))
+sns.regplot(x='Physical Activity Level', y='Sleep Disorder_Insomnia', data=df_encoded, logistic=True, scatter_kws={'s':10}, line_kws={'color':'red'})
+plt.title('Correlation between Physical Activity Level and Insomnia')
+plt.xlabel('Physical Activity Level (minutes/day)')
+plt.ylabel('Insomnia (0/1)')
+plt.grid(True)
 
+insomnia_data = df_encoded.groupby('Sleep Disorder')['Physical Activity Level'].mean().reset_index()
 
-#one hot encoding
-#df_encoded = pd.get_dummies(df, columns=['Sleep Disorder'], drop_first=False)
-#df_encoded['Sleep Disorder'] = df['Sleep Disorder']
+palette = ['#4fd1de', '#8ee553', '#e21916']
 
+plt.figure()
+sns.barplot(x='Sleep Disorder', y='Physical Activity Level', data=insomnia_data, palette=palette)
+plt.title('Average daily physical activity by sleep disorder')
+plt.xlabel('Sleep Disorder')
+plt.ylabel('Physical Activity Level [minutes/day]')
 
 #STRESS LEVEL
+plt.figure()
+df_encoded['Stress Level'].hist(bins=50)
+plt.title('Distribution of stress level')
+plt.xlabel('Stress Level')
+plt.ylabel('Count')
+
+
+plt.figure()
+sns.barplot(x='Sleep Disorder', y='Stress Level', hue='Gender', data=df_encoded, palette='viridis')
+plt.title('Stress Level by Sleep Disorder and Gender')
+plt.xlabel('Sleep Disorder')
+plt.ylabel('Stress Level')
+plt.legend(title='Gender')
+
+mean_stress_by_age_occup = df_encoded.groupby(['Age Range', 'Occupation Group'])['Stress Level'].mean().reset_index()
+
+
+plt.figure()
+sns.lineplot(x='Age Range', y='Stress Level', hue='Occupation Group', data=mean_stress_by_age_occup, marker='o', palette='viridis', linewidth=2.5)
+plt.title('Average stress level by Age Range')
+plt.xlabel('Age Range')
+plt.ylabel('Average stress level')
+plt.legend(title='Occupation Group')
+
 #BMI CATEGORY
+
+df_encoded['BMI Category'].value_counts()
+
+df_encoded['BMI Category'] = df['BMI Category'].replace({
+    'Normal Weight': 'Normal'
+    })
+
+df_encoded['BMI Category'].value_counts()
+
+plt.figure()
+df_encoded['BMI Category'].hist(bins=50)
+
+plt.figure()
+sns.barplot(x='Sleep Disorder', y='Age', hue='BMI Category', data=df_encoded, palette='plasma')
+plt.title('BMI by sleep disorder and age')
+plt.xlabel('Sleep Disorder')
+plt.ylabel('Age')
+plt.legend(title='BMI Category')
+
+df_bmi_encoded = pd.get_dummies(df_encoded['BMI Category'])
+
+df_encoded = pd.concat([df_encoded, df_bmi_encoded], axis=1)
+
+df_encoded['Normal'] = df_encoded['Normal'].astype(int)
+df_encoded['Obese'] = df_encoded['Obese'].astype(int)
+df_encoded['Overweight'] = df_encoded['Overweight'].astype(int)
+
+
+bmi_columns = [col for col in df_encoded.columns if col in ['Normal', 'Obese', 'Overweight']]
+sleep_disorder_columns = [col for col in df_encoded.columns if 'Sleep Disorder_' in col]
+
+for bmi_column in bmi_columns:
+    for sleep_disorder_column in sleep_disorder_columns:
+        corr = df_encoded[bmi_column].corr(df_encoded[sleep_disorder_column])
+        print(f'Correlation between {bmi_column} and {sleep_disorder_column}: {corr:.2f}')
+        
+plt.figure()
+sns.regplot(x='Normal', y='Sleep Disorder_None', data=df_encoded, logistic=True, scatter_kws={'s': 40}, line_kws={'color': 'red'}, ci=None)
+plt.title('Correlation between BMI Category - Normal and None Disorder')
+plt.xlabel('Presence of BMI Normal (0/1)')
+plt.ylabel('Presence of None (0/1)')
+plt.grid(True)
+
+plt.figure()
+sns.regplot(x='Overweight', y='Sleep Disorder_Insomnia', data=df_encoded, logistic=True, scatter_kws={'s': 40}, line_kws={'color': 'red'}, ci=None)
+plt.title('Correlation between BMI Category - Overweight and Insomnia Disorder')
+plt.xlabel('Presence of BMI Overweight (0/1)')
+plt.ylabel('Presence of Insomnia (0/1)')
+plt.grid(True)
+
+plt.figure()
+sns.regplot(x='Overweight', y='Sleep Disorder_Sleep Apnea', data=df_encoded, logistic=True, scatter_kws={'s': 40}, line_kws={'color': 'red'}, ci=None)
+plt.title('Correlation between BMI Category - Overweight and Insomnia Disorder')
+plt.xlabel('Presence of BMI Overweight (0/1)')
+plt.ylabel('Presence of Insomnia (0/1)')
+plt.grid(True)
+
+#BLOOD PRESSURE
+df_encoded[['systolic', 'diastolic']] = df_encoded['Blood Pressure'].str.split('/', expand=True)
+
+df_encoded['systolic'] = pd.to_numeric(df_encoded['systolic'])
+df_encoded['diastolic'] = pd.to_numeric(df_encoded['diastolic'])
+
+
+bp_index = df_encoded.columns.get_loc('Blood Pressure')
+
+new_list = (
+    df_encoded.columns[:bp_index+1].tolist() +
+    ['systolic', 'diastolic'] +
+    df_encoded.columns[bp_index+1:].tolist()    
+    )
+
+df_encoded = df_encoded[new_list]
+
+
+df_encoded.info()
+print(df_encoded.dtypes)
