@@ -86,7 +86,7 @@ plt.legend(title='Sleep Disorder')
 
 
 #OCCUPATION
-occupation_count = df['Occupation'].value_counts()
+df['Occupation'].value_counts()
 
 plt.figure()
 sns.countplot(x='Occupation', data=df, palette='viridis')
@@ -466,3 +466,6 @@ plt.figure()
 sns.heatmap(corr_matrix, annot=True, square=True)
 plt.title('Corr')
 
+
+plt.figure()
+sns.pairplot(df_with_num_col)
