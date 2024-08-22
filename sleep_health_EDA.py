@@ -10,14 +10,12 @@ df.head()
 df.info()
 pd.set_option('display.max_columns', None)
 df.describe()
-df.isnull().any()
-df.isna()
+df.isna().any()
 
 df = df.drop(columns='Person ID')
 
 
 #SLEEP DISORDER
-#Which disorder is the most common?
 disorder_count=df['Sleep Disorder'].value_counts()
 
 plt.figure()
@@ -25,13 +23,6 @@ plt.pie(disorder_count, labels=disorder_count.index, colors = ['yellowgreen', 'd
         autopct='%1.1f%%', shadow=False, startangle=70)
 plt.title('Distribution of Sleep Disorder', fontsize=14, fontweight='bold')
 
-'''
-plt.figure()
-df['Sleep Disorder'].hist(bins=10)
-plt.title('Distribution of Sleep Disorder')
-plt.xlabel('Sleep Disorder')
-plt.ylabel('Count')
-'''
 custom_palette = ['#8ee553', '#e21916', '#4fd1de']
 
 plt.figure()
@@ -83,7 +74,7 @@ df['Age Range'] = pd.cut(df['Age'], bins=bins, labels=labels, right=False)
 
 age_sleep_disorder = df.groupby(['Age Range', 'Sleep Disorder']).size().unstack(fill_value=0)
 
-age_sleep_disorder_perc = age_sleep_disorder.div(age_sleep_disorder.sum(axis=1), axis=0) * 100
+age_sleep_disorder_perc = age_sleep_disorder.apply(lambda x: x / x.sum(), axis=1) * 100
 
 
 plt.figure()
@@ -120,8 +111,7 @@ df['Occupation Group'] = df['Occupation'].apply(categorize_occupation)
 
 occupation_sleep_disorder = df.groupby(['Occupation Group', 'Sleep Disorder']).size().unstack(fill_value=0)
 
-#occupation percentage
-occupation_sleep_disorder_perc = occupation_sleep_disorder.div(occupation_sleep_disorder.sum(axis=1), axis=0) * 100
+occupation_sleep_disorder_perc = occupation_sleep_disorder.apply(lambda x: x/x.sum(), axis=1) * 100
 
 plt.figure()
 occupation_sleep_disorder_perc.plot(kind='bar', stacked=True, color=colors)
@@ -131,14 +121,12 @@ plt.ylabel('Count')
 plt.legend(title='Sleep Disorder')
 
 
-
 #SLEEP DURATION
 plt.figure()
 df['Sleep Duration'].hist(bins=20)
 plt.title('Distribution of sleep duration')
 plt.xlabel('Sleep Duration [hours]')
 plt.ylabel('Count')
-
 
 mean_sleep_duration = df.groupby('Sleep Disorder')['Sleep Duration'].mean()
 
@@ -188,7 +176,7 @@ plt.ylabel('Average Quality of Sleep')
 
 quality_of_sleep_age = df.groupby('Age Range')['Quality of Sleep'].mean()
 
-plt.figure(figsize=(10, 6))
+plt.figure()
 quality_of_sleep_age.plot(kind='line', marker='o', color='blue')
 plt.title('Average quality of sleep by age')
 plt.xlabel('Age Range')
@@ -270,7 +258,6 @@ plt.xlabel('Stress Level')
 plt.ylabel('Quality of Sleep')
 
 #BMI CATEGORY
-
 df['BMI Category'].value_counts()
 
 df['BMI Category'] = df['BMI Category'].replace({
@@ -320,7 +307,6 @@ df[['Systolic', 'Diastolic']] = df['Blood Pressure'].str.split('/', expand=True)
 df['Systolic'] = pd.to_numeric(df['Systolic'])
 df['Diastolic'] = pd.to_numeric(df['Diastolic'])
 
-
 bp_index = df.columns.get_loc('Blood Pressure')
 
 new_list = (
@@ -340,7 +326,6 @@ for bp_col in bp_columns:
     print(f'Correlation between {bp_col} and Quality of Sleep: {corr:.2f}')
     
 plt.figure()
-
 df_melted = df.melt(id_vars='Sleep Disorder', value_vars=['Systolic', 'Diastolic'], 
                      var_name='Pressure Type', value_name='Pressure')
 
@@ -373,7 +358,6 @@ bp_labels = ['Optimal', 'Normal','High Normal','Hypertension']
 
 df['Blood Pressure Category'] = np.select(bp_category, bp_labels, default='Undefined')
 
-
 undef_sum = (df['Blood Pressure Category'] == 'Undefined').sum()
 undef_row = df.loc[df['Blood Pressure Category'] == 'Undefined']
 
@@ -391,7 +375,7 @@ bp_palette = {
     'Hypertension':'#d60e1a'
     }
 
-plt.figure(figsize=(10, 6))
+plt.figure()
 sns.barplot(data=df_bp_perc_melted, x='Occupation Group', y='Percentage', hue='Blood Pressure Category', palette=bp_palette)
 plt.title('Percentage distribution of blood pressure in different occupation groups')
 plt.xlabel('Occupation Group')
@@ -437,9 +421,16 @@ plt.xlabel('Heart Rate')
 plt.ylabel('Quality of Sleep')
 
 plt.figure()
-sns.lineplot(data=df, x='Sleep Duration', y='Heart Rate', marker='o', linestyle='-')
+sns.lineplot(data=df, x='Heart Rate', y='Sleep Duration', marker='o', linestyle='-')
+plt.title('Sleep Duration by Heart Rate')
+plt.xlabel('Heart Rate')
+plt.ylabel('Sleep Duration')
 
 #DAILY STEPS
+df['Daily Steps'].hist(bins=30)
+plt.title('Distribution of Daily Steps')
+plt.xlabel('Daily Steps per day')
+plt.ylabel('Sleep Duration')
 
 corr_steps_quality_sleep = df['Daily Steps'].corr(df['Quality of Sleep'])
 
@@ -447,22 +438,15 @@ corr_steps_activity = df['Daily Steps'].corr(df['Physical Activity Level'])
 
 plt.figure()
 sns.scatterplot(data=df, x='Physical Activity Level', y='Daily Steps', hue='Gender', size='Heart Rate', sizes=(20,200))
-plt.title('Daily steps by physical activity level')
-plt.xlabel('Physical Activity Level')
-plt.ylabel('Daily Steps')
-
+plt.title('Daily steps by physical activity level by gender')
+plt.xlabel('Physical Activity Level [minutes/day]')
+plt.ylabel('Daily Steps per day')
 
 plt.figure()
 sns.violinplot(data=df, x='Sleep Disorder', y='Daily Steps')
 plt.title('Daily steps by sleep disorder')
 plt.xlabel('Sleep Disorder')
 plt.ylabel('Daily Steps')
-
-g = sns.FacetGrid(df, col='Age Range', row='BMI Category', margin_titles=True, sharex=False, sharey=True)
-g.map(sns.boxplot, 'Gender', 'Daily Steps', palette='Set2')
-g.set_axis_labels('Gender', 'Daily Steps')
-g.set_titles(col_template='{col_name}', row_template='{row_name}')
-g.add_legend()
 
 
 plt.figure(figsize=(14, 7))
@@ -472,13 +456,13 @@ plt.xlabel('Gender')
 plt.ylabel('Daily Steps')
 
 
-df_with_corr = df.drop(columns=['Gender', 'Occupation', 'BMI Category',
+df_with_num_col = df.drop(columns=['Gender', 'Occupation', 'BMI Category',
                                 'Blood Pressure', 'Sleep Disorder', 'Age Range',
                                 'Occupation Group', 'Blood Pressure Category'])
 
-corr_matrix = df_with_corr.corr()
+corr_matrix = df_with_num_col.corr()
+
 plt.figure()
 sns.heatmap(corr_matrix, annot=True, square=True)
 plt.title('Corr')
-
 
