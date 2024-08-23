@@ -32,7 +32,6 @@ Target: Quality of Sleep - subjective rating of the quality of sleep, ranging fr
 
 <img src="images/gender.PNG" width="710" height="600" />
 <img src="images/distrib_sd.PNG" width="710" height="600" />
-![distribution_of_sd](images/distrib_sd.PNG)
 
 
 ## **Main steps of the analysis**
