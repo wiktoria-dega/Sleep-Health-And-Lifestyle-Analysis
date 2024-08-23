@@ -57,7 +57,7 @@ A high correlation between stress levels and age has been observed, which may be
 
 **3.** Based on the analysis of the data, it can also be concluded that sleep length plays a significant role in sleep quality. A significant upward trend was observed here - as the length of sleep increased, so did its quality. Longer sleep allows a person to go through full sleep cycles, which means a person has more opportunities to enter the deep sleep and REM phases. This, in turn, improves the overall quality of sleep, as each sleep phase has an important regenerative function. When sleep duration is too short, a person may not achieve an adequate number of complete sleep cycles, leading to the body not having enough time to regenerate. As a result, this can lead to feelings of fatigue, lowered mood, concentration problems and a weakened immune system.
 
-![quality_of_sleep_sl_duration](images/![sleep_disorder_by_occupation](images/distrib_occup_perc.PNG)
+![quality_of_sleep_sl_duration](images/distrib_occup_perc.PNG)
 
 **4.** Stress levels also play a significant role in sleep quality. The higher the level of stress among the subjects, the worse they rated the quality of their sleep. This is most likely due to the high amount of cortisol, a stress hormone produced by the adrenal glands. As a result of elevated cortisol levels, heart rate and blood pressure, among other things, increase. Elevated cortisol negatively affects the diurnal rhythm, which can lead to difficulty falling asleep and sleep disorders.
 
@@ -70,7 +70,7 @@ A high correlation between stress levels and age has been observed, which may be
 
 **6.** When studying the prevalence of sleep disorders, it was observed that insomnia was most often suffered by people in the 40-50 age range, which may be related to stressors such as work challenges, family challenges such as raising children, caring for aging parents, and one's own health problems, which increases the risk of developing insomnia. Sleep apnea, on the other hand, was most often suffered by people over 55 years of age and was mainly suffered by women. This may be due to physiological changes, i.e. reduced muscle tension in the throat, while in women, menopause, during which levels of the protective hormones estrogen and progesterone decline, may be a factor in increasing the incidence of sleep apnea.
 
-![sleep_disorder_by_age](images/boxplot_sd_ager.PNG)
+![sleep_disorder_by_age](images/boxplot_sd_age.PNG)
 ![sleep_disorder_by_age_perc](images/sd_age_perc.PNG)
 ![sleep_disorder_by_gender](images/distrib_sd_gender.PNG)
 
