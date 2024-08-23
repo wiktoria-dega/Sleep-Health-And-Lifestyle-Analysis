@@ -31,6 +31,7 @@ Target: Quality of Sleep - subjective rating of the quality of sleep, ranging fr
 * Sleep Disorder
 
 ![distribution_of_gender](images/gender.PNG)
+<img src="images/gender.PNG" width="200" height="200" />
 ![distribution_of_sd](images/distrib_sd.PNG)
 
 
