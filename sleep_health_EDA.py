@@ -81,7 +81,7 @@ plt.figure()
 age_sleep_disorder_perc.plot(kind='bar', stacked=True, color=colors)
 plt.title('Percentage distribution of sleep disorders by age ranges')
 plt.xlabel('Age Range')
-plt.ylabel('Count')
+plt.ylabel('Percentage')
 plt.legend(title='Sleep Disorder')
 
 
@@ -117,7 +117,7 @@ plt.figure()
 occupation_sleep_disorder_perc.plot(kind='bar', stacked=True, color=colors)
 plt.title('Percentage distribution of Sleep Disorders by Occupation Group')
 plt.xlabel('Occupation Group')
-plt.ylabel('Count')
+plt.ylabel('Percentage')
 plt.legend(title='Sleep Disorder')
 
 
@@ -181,6 +181,19 @@ quality_of_sleep_age.plot(kind='line', marker='o', color='blue')
 plt.title('Average quality of sleep by age')
 plt.xlabel('Age Range')
 plt.ylabel('Average Quality of Sleep')
+
+plt.figure()
+sns.lineplot(x='Sleep Duration', y='Quality of Sleep', data=df)
+plt.title('Quality of Sleep by Sleep Duration')
+plt.xlabel('Sleep Duration')
+plt.ylabel('Quality of Sleep')
+
+sns.set(style='whitegrid')
+plt.figure()
+sns.regplot(x='Sleep Duration', y='Quality of Sleep', data=df, scatter_kws={'s':50}, line_kws={'color':'red'})
+sns.lineplot(x='Sleep Duration', y='Quality of Sleep', data=df, color='blue', marker='o', markersize=8)
+plt.title('Quality of Sleep by Sleep Duration')
+
 
 #PHYSICAL ACTIVITY LEVEL
 plt.figure()
@@ -250,6 +263,10 @@ plt.title('Average stress level by Age Range')
 plt.xlabel('Age Range')
 plt.ylabel('Average stress level')
 plt.legend(title='Occupation Group')
+
+plt.figure()
+sns.lineplot(x='Age Range', y='Stress Level', data=df, marker='o')
+plt.title('Stress Level by Age')
 
 plt.figure()
 sns.lineplot(x='Stress Level', y='Quality of Sleep', hue='Gender', data=df, palette='viridis')
@@ -336,13 +353,13 @@ plt.xlabel('Sleep Disorder')
 plt.ylabel('Pressure')
 
 plt.figure()
-sns.barplot(x='Age Range', y='Systolic', hue='Gender', data=df, palette='plasma')
+sns.barplot(x='Age Range', y='Systolic', data=df, palette='plasma')
 plt.title('Systolic blood pressure by age and gender')
 plt.xlabel('Age Range')
 plt.ylabel('Systolic Blood Pressure')
 
 plt.figure()
-sns.barplot(x='Age Range', y='Diastolic', hue='Gender', data=df, palette='plasma')
+sns.barplot(x='Age Range', y='Diastolic', data=df, palette='plasma')
 plt.title('Diastolic blood pressure by age and gender')
 plt.xlabel('Age Range')
 plt.ylabel('Diastolic Blood Pressure')
@@ -381,6 +398,7 @@ plt.title('Percentage distribution of blood pressure in different occupation gro
 plt.xlabel('Occupation Group')
 plt.ylabel('Percentage')
 plt.legend(title='Blood Pressure Category')
+
 
 #HEART RATE
 df['Heart Rate'].hist(bins=30)
@@ -464,7 +482,7 @@ corr_matrix = df_with_num_col.corr()
 
 plt.figure()
 sns.heatmap(corr_matrix, annot=True, square=True)
-plt.title('Corr')
+plt.title('Correlation matrix')
 
 
 plt.figure()
