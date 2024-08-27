@@ -90,9 +90,11 @@ df['Occupation'].value_counts()
 
 plt.figure()
 sns.countplot(x='Occupation', data=df, palette='viridis')
-plt.title('Distribution of occupations')
+plt.title('Distribution of Occupations')
 plt.xlabel('Occupation')
 plt.ylabel('Count')
+plt.xticks(rotation=45, ha='right', fontsize=10)
+plt.tight_layout() 
 
 def categorize_occupation(occupation):
     if occupation in ['Nurse', 'Doctor']:
@@ -154,7 +156,7 @@ plt.ylabel('Average sleep duration [hours]')
 mean_sleep_duration_by_occup = df.groupby('Occupation Group')['Sleep Duration'].mean()
 
 plt.figure()
-mean_sleep_duration_by_occup.plot(kind='bar', color=['#357dbd', '#15a28f', '#1c9a50', '#e9c825', '#a21a0e'])
+mean_sleep_duration_by_occup.plot(kind='bar', color=sns.color_palette('Set2'))
 plt.title('Sleep duration by occupation')
 plt.xlabel('Occupation Group')
 plt.ylabel('Average sleep duration [hours]')
@@ -257,12 +259,13 @@ plt.legend(title='Gender')
 mean_stress_by_age_occup = df.groupby(['Age Range', 'Occupation Group'])['Stress Level'].mean().reset_index()
 
 
-plt.figure()
-sns.lineplot(x='Age Range', y='Stress Level', hue='Occupation Group', data=mean_stress_by_age_occup, marker='o', palette='viridis', linewidth=2.5)
+plt.figure(figsize=(12,8))
+sns.lineplot(x='Age Range', y='Stress Level', hue='Occupation Group',data=mean_stress_by_age_occup, marker='o', palette='tab10', linewidth=3)
 plt.title('Average stress level by Age Range')
 plt.xlabel('Age Range')
 plt.ylabel('Average stress level')
-plt.legend(title='Occupation Group')
+plt.legend(title='Occupation Group', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.tight_layout()
 
 plt.figure()
 sns.lineplot(x='Age Range', y='Stress Level', data=df, marker='o')
@@ -353,13 +356,13 @@ plt.xlabel('Sleep Disorder')
 plt.ylabel('Pressure')
 
 plt.figure()
-sns.barplot(x='Age Range', y='Systolic', data=df, palette='plasma')
+sns.barplot(x='Age Range', y='Systolic', data=df, palette='viridis')
 plt.title('Systolic blood pressure by age and gender')
 plt.xlabel('Age Range')
 plt.ylabel('Systolic Blood Pressure')
 
 plt.figure()
-sns.barplot(x='Age Range', y='Diastolic', data=df, palette='plasma')
+sns.barplot(x='Age Range', y='Diastolic', data=df, palette='viridis')
 plt.title('Diastolic blood pressure by age and gender')
 plt.xlabel('Age Range')
 plt.ylabel('Diastolic Blood Pressure')
@@ -426,14 +429,7 @@ plt.ylabel('Heart Rate')
 
 sns.set(style='whitegrid')
 plt.figure()
-sns.scatterplot(x='Heart Rate', y='Quality of Sleep', hue='Occupation Group', style='Occupation Group', s=100, data=df)
-plt.title('Quality of sleep by heart rate in different occupation groups')
-plt.xlabel('Heart Rate')
-plt.ylabel('Quality of Sleep')
-
-sns.set(style='whitegrid')
-plt.figure()
-sns.lmplot(data=df, x='Heart Rate', y='Quality of Sleep', hue='Occupation Group', markers=["o", "s", "D", "+", "H"], palette='deep')
+sns.lmplot(data=df, x='Heart Rate', y='Quality of Sleep', hue='Occupation Group', markers="", palette='deep', scatter=False)
 plt.title('Linear regression of sleep quality on resting heart rate in different occupation groups')
 plt.xlabel('Heart Rate')
 plt.ylabel('Quality of Sleep')
@@ -456,9 +452,11 @@ corr_steps_activity = df['Daily Steps'].corr(df['Physical Activity Level'])
 
 plt.figure()
 sns.scatterplot(data=df, x='Physical Activity Level', y='Daily Steps', hue='Gender', size='Heart Rate', sizes=(20,200))
-plt.title('Daily steps by physical activity level by gender')
+plt.title('Daily steps by Physical Activity Level by Gender')
 plt.xlabel('Physical Activity Level [minutes/day]')
 plt.ylabel('Daily Steps per day')
+plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0)
+plt.tight_layout()
 
 plt.figure()
 sns.violinplot(data=df, x='Sleep Disorder', y='Daily Steps')
@@ -466,21 +464,13 @@ plt.title('Daily steps by sleep disorder')
 plt.xlabel('Sleep Disorder')
 plt.ylabel('Daily Steps')
 
-
-plt.figure(figsize=(14, 7))
-sns.boxplot(x='Gender', y='Daily Steps', hue='BMI Category', data=df, palette='Set2')
-plt.title('Daily Steps by Gender and Age Range')
-plt.xlabel('Gender')
-plt.ylabel('Daily Steps')
-
-
 df_with_num_col = df.drop(columns=['Gender', 'Occupation', 'BMI Category',
                                 'Blood Pressure', 'Sleep Disorder', 'Age Range',
                                 'Occupation Group', 'Blood Pressure Category'])
 
 corr_matrix = df_with_num_col.corr()
 
-plt.figure()
+plt.figure(figsize=(12,8))
 sns.heatmap(corr_matrix, annot=True, square=True)
 plt.title('Correlation matrix')
 
